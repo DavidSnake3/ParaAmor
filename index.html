@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sorpresa para Nicol</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(45deg, rgba(26, 0, 51, 0.7), rgba(0, 0, 0, 0.7), rgba(26, 0, 51, 0.7));
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url('Abrelo.jpg');
+            background-size: cover;
+            background-position: center;
+            filter: blur(5px);
+            z-index: -1;
+        }
+        .gift-container {
+            position: relative;
+            width: 200px;
+            height: 240px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 1;
+        }
+        .gift-box {
+            width: 200px;
+            height: 200px;
+            background: linear-gradient(45deg, #ff3366, #ff6b6b);
+            border: 4px solid #ffd700;
+            border-radius: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: transform 0.5s;
+        }
+        .gift-box:hover {
+            transform: scale(1.05);
+        }
+        .gift-box:active {
+            transform: scale(0.95);
+        }
+        .gift-box::before {
+            content: '🎁';
+            font-size: 5rem;
+        }
+        .open-text {
+            margin-top: 10px;
+            font-size: 1.5rem;
+            color: #ffd700;
+            text-shadow: 0 0 5px #ff00de, 0 0 10px #ff00de;
+            animation: pulse 1s infinite alternate;
+            transition: opacity 0.5s;
+        }
+        .surprise {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            opacity: 0;
+            transition: all 0.5s;
+            width: 300px;
+            text-align: center;
+        }
+        .surprise h1 {
+            font-size: 1.5rem;
+            color: #ffffff;
+            text-shadow: 
+                0 0 5px #ff00de,
+                0 0 10px #ff00de,
+                0 0 20px #ff00de,
+                0 0 40px #ff00de;
+            animation: neon-pulse 1s infinite alternate;
+        }
+        @keyframes neon-pulse {
+            from {
+                text-shadow: 
+                    0 0 5px #ff00de,
+                    0 0 10px #ff00de,
+                    0 0 20px #ff00de,
+                    0 0 40px #ff00de;
+            }
+            to {
+                text-shadow: 
+                    0 0 2px #ff00de,
+                    0 0 5px #ff00de,
+                    0 0 10px #ff00de,
+                    0 0 20px #ff00de;
+            }
+        }
+        @keyframes pulse {
+            from { opacity: 0.5; }
+            to { opacity: 1; }
+        }
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: #f0f;
+            opacity: 0;
+        }
+        .photo-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 1s;
+        }
+        .photo-background img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        @media (max-width: 600px) {
+            .gift-container {
+                width: 150px;
+                height: 190px;
+            }
+            .gift-box {
+                width: 150px;
+                height: 150px;
+            }
+            .gift-box::before {
+                font-size: 4rem;
+            }
+            .open-text {
+                font-size: 1.2rem;
+            }
+            .surprise {
+                width: 250px;
+            }
+            .surprise h1 {
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="gift-container" id="giftContainer">
+        <div class="gift-box" id="giftBox"></div>
+        <div class="open-text" id="openText">Ábrelo!!</div>
+        <div class="surprise" id="surprise">
+            <h1 id="surpriseText">Te amo Nicol Murillo Soto MUAH!!</h1>
+        </div>
+    </div>
+    <div class="photo-background" id="photoBackground">
+        <img src="Foto2.jpg" alt="Fondo 1">
+    </div>
+    <div class="photo-background" id="photoBackground2">
+        <img src="Rosas.jpg" alt="Fondo 2">
+    </div>
+
+    <audio id="backgroundMusic" loop>
+        <source src="Musica.mp3" type="audio/mpeg">
+        Tu navegador no soporta el elemento de audio.
+    </audio>
+
+    <script>
+        const giftBox = document.getElementById('giftBox');
+        const surprise = document.getElementById('surprise');
+        const giftContainer = document.getElementById('giftContainer');
+        const openText = document.getElementById('openText');
+        const photoBackground = document.getElementById('photoBackground');
+        const photoBackground2 = document.getElementById('photoBackground2');
+        const surpriseText = document.getElementById('surpriseText');
+        const backgroundMusic = document.getElementById('backgroundMusic');
+
+        const phrases = [
+            "Te amo Nicol Murillo Soto MUAH!!",
+            "Eres el amor de mi vida",
+            "Contigo quiero pasar el resto de mis días",
+            "Eres mi sol en días nublados",
+            "Tu sonrisa ilumina mi mundo"
+        ];
+
+        let currentPhraseIndex = 0;
+        let phraseInterval;
+
+        giftBox.addEventListener('click', () => {
+            giftBox.style.transform = 'scale(0)';
+            surprise.style.transform = 'translate(-50%, -50%) scale(1)';
+            surprise.style.opacity = '1';
+            openText.style.display = 'none';
+            createConfetti();
+            showBackgroundPhotos();
+            startChangingPhrases();
+            playBackgroundMusic();
+        });
+
+        function createConfetti() {
+            const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff'];
+            for (let i = 0; i < 100; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + '%';
+                confetti.style.top = Math.random() * 100 + '%';
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                giftContainer.appendChild(confetti);
+
+                const animation = confetti.animate([
+                    { transform: 'translate(0, 0)', opacity: 1 },
+                    { transform: `translate(${Math.random() * 200 - 100}px, ${Math.random() * 200 - 100}px)`, opacity: 0 }
+                ], {
+                    duration: Math.random() * 1000 + 1000,
+                    easing: 'cubic-bezier(0,0,0.2,1)'
+                });
+
+                animation.onfinish = () => confetti.remove();
+            }
+        }
+
+        function showBackgroundPhotos() {
+            const photos = [
+                "Flores Amarillas.jpg",
+                "Flores negras.jpg",
+                "Rosas.jpg",
+                "Foto2.jpg",
+                // Añade aquí todas las URLs de tus fotos
+            ];
+            let currentPhotoIndex = 0;
+
+            photoBackground.style.opacity = '1';
+            setTimeout(() => {
+                photoBackground2.style.opacity = '1';
+            }, 2000);
+
+            setInterval(() => {
+                currentPhotoIndex = (currentPhotoIndex + 1) % photos.length;
+                photoBackground.querySelector('img').src = photos[currentPhotoIndex];
+                setTimeout(() => {
+                    currentPhotoIndex = (currentPhotoIndex + 1) % photos.length;
+                    photoBackground2.querySelector('img').src = photos[currentPhotoIndex];
+                }, 2000);
+            }, 4000);
+        }
+
+        function startChangingPhrases() {
+            phraseInterval = setInterval(() => {
+                currentPhraseIndex = (currentPhraseIndex + 1) % phrases.length;
+                surpriseText.textContent = phrases[currentPhraseIndex];
+            }, 4000);
+        }
+
+        function playBackgroundMusic() {
+            backgroundMusic.play().catch(error => {
+                console.log("Reproducción automática bloqueada por el navegador. El usuario debe interactuar con la página para reproducir la música.");
+            });
+        }
+    </script>
+</body>
+</html>
